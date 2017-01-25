@@ -23,7 +23,7 @@ type alias Model =
 
 init : (Model, Cmd Msg)
 init =
-    ( Model "allthingsprotoss"
+    ( Model "reactjs"
     , Cmd.none
     )
 
@@ -63,6 +63,19 @@ subscriptions model =
   Sub.none
 
 -- Http
+--
+-- Here's what we need to decode:
+--
+
+-- {
+--   "data": {
+--     "children": [
+--       {"data": {"url": "something.com", "title": "some title"}},
+--       {"data": {"url": "another-something.com", "title": "another title"}}
+--     ]
+--   }
+-- }
+
 -- type alias Post =
 --   { title : String
 --   , url : String
