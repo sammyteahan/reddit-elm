@@ -1,11 +1,15 @@
+module Main exposing (..)
+
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
-import Json.Decode as Json exposing (string)
+
+import Json.Decode as Json exposing (..)
 import Json.Decode.Pipeline as JsonPipeline exposing (decode, required)
 import Json.Decode.Extra exposing ((|:))
 import Task
+
 
 -- Main
 main =
@@ -16,21 +20,31 @@ main =
     , subscriptions = subscriptions
     }
 
--- Model
+
+-- Model(s)
+type alias Post =
+  { title : String
+  , url : String
+  , domain : String
+  }
+
 type alias Model =
   { searchString : String
+  , posts : List Post
   }
 
 init : (Model, Cmd Msg)
 init =
-    ( Model "reactjs"
+    ( Model "reactjs" []
     , Cmd.none
     )
+
 
 -- Update
 type Msg
   = UpdateSearchString String
-  -- | NewSubreddit (Result Http.Error Posts)
+  | GetSubreddit
+  | NewSubreddit (Result Http.Error (List Post))
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -38,11 +52,15 @@ update msg model =
     UpdateSearchString newString ->
       { model | searchString = newString } ! []
 
-    -- NewSubreddit (Ok posts) ->
-    --   (model, Cmd.none)
-    --
-    -- NewSubreddit (Err _) ->
-    --   (model, Cmd.none)
+    GetSubreddit ->
+      { model | searchString = "rails" } ! [ getSubReddit model.searchString ]
+
+    NewSubreddit (Ok posts) ->
+      (model, Cmd.none)
+
+    NewSubreddit (Err _) ->
+      (model, Cmd.none)
+
 
 -- View
 view : Model -> Html Msg
@@ -52,20 +70,19 @@ view model =
             , autofocus True
             , onInput UpdateSearchString
             ] []
-    , button [] [ text "Get info" ]
+    , button [ onClick GetSubreddit ] [ text "Get info" ]
     , br [] []
     , h2 [] [ text model.searchString ]
     ]
+
 
 -- Subscriptions
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.none
 
+
 -- Http
---
--- Here's what we need to decode:
---
 
 -- {
 --   "data": {
@@ -76,27 +93,21 @@ subscriptions model =
 --   }
 -- }
 
--- type alias Post =
---   { title : String
---   , url : String
---   }
---
--- type alias Posts = List Post
---
--- getSubReddit : String -> Cmd Msg
--- getSubReddit searchString =
---   let
---     url = "https://www.reddit.com/r/" ++ searchString
---   in
---     Http.send NewSubreddit (Http.get url decodePosts)
---
--- decodePosts : Json.Decoder Posts
--- decodePosts =
---   decode Posts
---     |> JsonPipeline.required "data" string
---
--- decodePost : Json.Decoder Post
--- decodePost =
---   decode Post
---     |> JsonPipeline.required "title" string
---     |> JsonPipeline.required "url" string
+getSubReddit : String -> Cmd Msg
+getSubReddit searchString =
+  let
+    url = "https://www.reddit.com/r/" ++ searchString ++ ".json"
+  in
+    Http.send NewSubreddit (Http.get url decodePosts)
+
+decodePost : Json.Decoder Post
+decodePost =
+  Json.map3 Post
+    (Json.at ["data", "title"] Json.string)
+    (Json.at ["data", "url"] Json.string)
+    (Json.at ["data", "domain"] Json.string)
+
+decodePosts : Json.Decoder (List Post)
+decodePosts =
+  Json.list decodePost
+    |> Json.at ["data", "children"]
