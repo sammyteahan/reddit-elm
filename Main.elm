@@ -30,12 +30,14 @@ type alias Post =
 
 type alias Model =
   { searchString : String
+  , loading : Bool
+  , imgUrl : String
   , posts : List Post
   }
 
 init : (Model, Cmd Msg)
 init =
-    ( Model "reactjs" []
+    ( Model "reactjs" False "loading.gif" []
     , Cmd.none
     )
 
@@ -53,10 +55,10 @@ update msg model =
       { model | searchString = newString } ! []
 
     GetSubreddit ->
-      { model | searchString = "rails" } ! [ getSubReddit model.searchString ]
+      { model | searchString = "rails", loading = True } ! [ getSubReddit model.searchString ]
 
     NewSubreddit (Ok posts) ->
-      ( Model model.searchString posts, Cmd.none)
+      ( Model model.searchString False "" posts, Cmd.none)
 
     NewSubreddit (Err _) ->
       (model, Cmd.none)
@@ -65,7 +67,7 @@ update msg model =
 -- View
 view : Model -> Html Msg
 view model =
-  div []
+  div [ class "container" ]
     [ input [ placeholder "Subreddit"
             , autofocus True
             , onInput UpdateSearchString
@@ -73,8 +75,20 @@ view model =
     , button [ onClick GetSubreddit ] [ text "Get info" ]
     , br [] []
     , h2 [] [ text model.searchString ]
+    , div [ class "wrap-posts" ]
+      [ h2 [] [ text "Posts" ]
+      , br [] []
+      , section []
+        [ ul [ class "posts" ]
+          (List.map postView model.posts)
+        ]
+      ]
     ]
 
+postView : Post -> Html Msg
+postView post =
+  div []
+    [ p [] [ text post.title ] ]
 
 -- Subscriptions
 subscriptions : Model -> Sub Msg
@@ -83,16 +97,6 @@ subscriptions model =
 
 
 -- Http
-
--- {
---   "data": {
---     "children": [
---       {"data": {"url": "something.com", "title": "some title"}},
---       {"data": {"url": "another-something.com", "title": "another title"}}
---     ]
---   }
--- }
-
 getSubReddit : String -> Cmd Msg
 getSubReddit searchString =
   let
