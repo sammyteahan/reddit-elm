@@ -56,7 +56,7 @@ update msg model =
       { model | searchString = "rails" } ! [ getSubReddit model.searchString ]
 
     NewSubreddit (Ok posts) ->
-      (model, Cmd.none)
+      ( Model model.searchString posts, Cmd.none)
 
     NewSubreddit (Err _) ->
       (model, Cmd.none)
