@@ -19,6 +19,12 @@ The main purpose of this project is to learn a little more about decoding comple
 
 ###### Todo
 
-[] Handle errors
-[] Loading animations
-[] Nicer selection of sub reddits
+- [x] Type alias' and initial Model
+- [x] Post Decoder
+- [x] Posts Decoder
+- [x] Http Cmd
+- [] Better view composition
+- [] Handle errors
+- [] Loading animations
+- [] Nicer selection of sub reddits
+- [] Style
