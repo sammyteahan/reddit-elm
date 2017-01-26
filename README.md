@@ -28,3 +28,4 @@ The main purpose of this project is to learn a little more about decoding comple
 - [ ] Loading animations
 - [ ] Nicer selection of sub reddits
 - [ ] Style
+- [ ] Replace Json.Decoder.mapN with Json.Decode.Pipeline and Json.Decode.Extra
