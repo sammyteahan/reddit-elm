@@ -38,7 +38,7 @@ type alias Model =
 init : (Model, Cmd Msg)
 init =
     ( Model "reactjs" False "loading.gif" []
-    , Cmd.none
+    , getSubReddit "reactjs"
     )
 
 
@@ -55,7 +55,7 @@ update msg model =
       { model | searchString = newString } ! []
 
     GetSubreddit ->
-      { model | searchString = "rails", loading = True } ! [ getSubReddit model.searchString ]
+      { model | loading = True } ! [ getSubReddit model.searchString ]
 
     NewSubreddit (Ok posts) ->
       ( Model model.searchString False "" posts, Cmd.none)
