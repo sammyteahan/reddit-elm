@@ -37,8 +37,8 @@ type alias Model =
 
 init : (Model, Cmd Msg)
 init =
-    ( Model "reactjs" False "loading.gif" []
-    , getSubReddit "reactjs"
+    ( Model "elm" True "loading.gif" []
+    , getSubReddit "elm"
     )
 
 
@@ -88,7 +88,7 @@ view model =
 postView : Post -> Html Msg
 postView post =
   div []
-    [ p [] [ text post.title ] ]
+    [ a [ href post.url, target "_blank" ] [ text post.title ] ]
 
 -- Subscriptions
 subscriptions : Model -> Sub Msg

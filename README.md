@@ -29,3 +29,4 @@ The main purpose of this project is to learn a little more about decoding comple
 - [ ] Nicer selection of sub reddits
 - [ ] Style
 - [ ] Replace Json.Decoder.mapN with Json.Decode.Pipeline and Json.Decode.Extra
+- [ ] Conditionally show html based on model value
