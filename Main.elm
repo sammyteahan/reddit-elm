@@ -30,7 +30,7 @@ type alias Post =
 
 type alias Model =
   { searchString : String
-  , loading : Bool
+  , fetching : Bool
   , imgUrl : String
   , posts : List Post
   }
@@ -55,7 +55,7 @@ update msg model =
       { model | searchString = newString } ! []
 
     GetSubreddit ->
-      { model | loading = True } ! [ getSubReddit model.searchString ]
+      { model | fetching = True } ! [ getSubReddit model.searchString ]
 
     NewSubreddit (Ok posts) ->
       ( Model model.searchString False "" posts, Cmd.none)
