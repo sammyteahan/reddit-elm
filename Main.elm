@@ -82,9 +82,17 @@ view model =
       , main = [ viewContent model ]
       }
 
+containerStyle : List (Options.Property a b)
+containerStyle =
+    [ css "margin" "auto"
+    , css "padding-left" "8%"
+    , css "padding-right" "8%"
+    , css "padding-top" "25px"
+    ]
+
 viewContent : Model -> Html Msg
 viewContent model =
-  div [ class "container" ]
+  Options.div containerStyle
     [ input [ placeholder "Subreddit"
             , autofocus True
             , onInput UpdateSearchString
@@ -102,7 +110,7 @@ viewContent model =
       [ h2 [] [ text "Posts" ]
       , br [] []
       , section []
-        [ ul [ class "posts" ]
+        [ div [ class "posts" ]
           (List.map postView model.posts)
         ]
       ]
