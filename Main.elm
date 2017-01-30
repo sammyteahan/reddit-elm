@@ -66,9 +66,12 @@ update msg model =
 
 
 -- View
+-- Don't use 'Schem.top..' in prod. It does handle some style/Scheme
+-- related stuff, but all it really does is inject google stylesheets
+-- into a header script, which should be done in index.html
 view : Model -> Html Msg
 view model =
-  Scheme.topWithScheme Color.Red Color.Amber -- Don't do this 'top' thing in prod. This 'injects' google css to top of script
+  Scheme.topWithScheme Color.Red Color.Amber
     <| Layout.render Mdl
       model.mdl
       [ Layout.fixedHeader

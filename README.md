@@ -23,10 +23,10 @@ The main purpose of this project is to learn a little more about decoding comple
 - [x] Post Decoder
 - [x] Posts Decoder
 - [x] Http Cmd
-- [ ] Better view composition
+- [x] Better view composition
 - [ ] Handle errors
 - [ ] Loading animations
 - [ ] Nicer selection of sub reddits
 - [ ] Style
 - [ ] Replace Json.Decoder.mapN with Json.Decode.Pipeline and Json.Decode.Extra
-- [ ] Conditionally show html based on model value
+- [ ] Conditionally show html based on fetching (usings funcs & case statements)
