@@ -95,17 +95,15 @@ viewContent : Model -> Html Msg
 viewContent model =
   Options.div containerStyle
     [ Textfield.render Mdl [0] model.mdl
-      [ Textfield.label "subreddit"
-      , Textfield.floatingLabel
-      , Textfield.text_
-      , Options.onInput UpdateSearchString
+      [ Options.onInput UpdateSearchString
       ]
       []
-    , Button.render Mdl [ 0 ] model.mdl
+    , Button.render Mdl [1] model.mdl
       [ Button.raised
       , Button.ripple
       , Button.colored
       , Options.onClick GetSubreddit
+      , css "margin-left" "10px"
       ]
       [ text "Fetch Subreddit" ]
     , br [] []
