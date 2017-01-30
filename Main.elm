@@ -3,22 +3,18 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Http
-
 import Json.Decode as Json exposing (..)
-import Json.Decode.Pipeline as JsonPipeline exposing (decode, required)
-import Json.Decode.Extra exposing ((|:))
+import Http
 import Task
 
-
--- Main
-main =
-  Html.program
-    { init = init
-    , view = view
-    , update = update
-    , subscriptions = subscriptions
-    }
+import Material
+import Material.Scheme as Scheme
+import Material.Layout as Layout
+import Material.Button as Button
+import Material.Color as Color
+import Material.Options as Options exposing (css)
+import Json.Decode.Pipeline as JsonPipeline exposing (decode, required)
+import Json.Decode.Extra exposing ((|:))
 
 
 -- Model(s)
@@ -33,11 +29,12 @@ type alias Model =
   , fetching : Bool
   , imgUrl : String
   , posts : List Post
+  , mdl : Material.Model
   }
 
 init : (Model, Cmd Msg)
 init =
-    ( Model "elm" True "loading.gif" []
+    ( Model "elm" True "loading.gif" [] Material.model
     , getSubReddit "elm"
     )
 
@@ -47,6 +44,7 @@ type Msg
   = UpdateSearchString String
   | GetSubreddit
   | NewSubreddit (Result Http.Error (List Post))
+  | Mdl (Material.Msg Msg)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -58,21 +56,37 @@ update msg model =
       { model | fetching = True } ! [ getSubReddit model.searchString ]
 
     NewSubreddit (Ok posts) ->
-      ( Model model.searchString False "" posts, Cmd.none)
+      { model | posts = posts, fetching = False } ! []
 
     NewSubreddit (Err _) ->
       (model, Cmd.none)
+
+    Mdl msg_ ->
+      Material.update Mdl msg_ model
 
 
 -- View
 view : Model -> Html Msg
 view model =
+  Scheme.topWithScheme Color.Red Color.Amber -- Don't do this 'top' thing in prod. This 'injects' google css to top of script
+    <| Layout.render Mdl
+      model.mdl
+      [ Layout.fixedHeader
+      ]
+      { header = [ h1 [ style [("padding-left", "20px")]] [ text "Elm Reddit" ] ]
+      , drawer = []
+      , tabs = ( [], [] )
+      , main = [ viewContent model ]
+      }
+
+viewContent : Model -> Html Msg
+viewContent model =
   div [ class "container" ]
     [ input [ placeholder "Subreddit"
             , autofocus True
             , onInput UpdateSearchString
             ] []
-    , button [ onClick GetSubreddit ] [ text "Get info" ]
+    , Button.render Mdl [ 0 ] model.mdl [ Options.onClick GetSubreddit ] [ text "Get info" ]
     , br [] []
     , h2 [] [ text model.searchString ]
     , div [ class "wrap-posts" ]
@@ -84,11 +98,13 @@ view model =
         ]
       ]
     ]
+    -- Scheme.topWithScheme Color.Teal Color.Green
 
 postView : Post -> Html Msg
 postView post =
   div []
-    [ a [ href post.url, target "_blank" ] [ text post.title ] ]
+    [ a [ style [("color", "#000")], href post.url, target "_blank" ] [ text post.title ] ]
+
 
 -- Subscriptions
 subscriptions : Model -> Sub Msg
@@ -115,3 +131,13 @@ decodePosts : Json.Decoder (List Post)
 decodePosts =
   Json.list decodePost
     |> Json.at ["data", "children"]
+
+
+-- Main
+main =
+  Html.program
+    { init = init
+    , view = view
+    , update = update
+    , subscriptions = subscriptions
+    }
