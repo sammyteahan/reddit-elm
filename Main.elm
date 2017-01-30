@@ -13,7 +13,7 @@ import Material.Layout as Layout
 import Material.Button as Button
 import Material.Color as Color
 import Material.Options as Options exposing (css)
-import Json.Decode.Pipeline as JsonPipeline exposing (decode, required)
+import Json.Decode.Pipeline as JsonPipeline exposing (decode, required, requiredAt)
 import Json.Decode.Extra exposing ((|:))
 
 
@@ -71,7 +71,7 @@ update msg model =
 -- into a header script, which should be done in index.html
 view : Model -> Html Msg
 view model =
-  Scheme.topWithScheme Color.Red Color.Amber
+  Scheme.topWithScheme Color.Teal Color.LightGreen
     <| Layout.render Mdl
       model.mdl
       [ Layout.fixedHeader
@@ -89,7 +89,13 @@ viewContent model =
             , autofocus True
             , onInput UpdateSearchString
             ] []
-    , Button.render Mdl [ 0 ] model.mdl [ Options.onClick GetSubreddit ] [ text "Get info" ]
+    , Button.render Mdl [ 0 ] model.mdl
+      [ Button.raised
+      , Button.ripple
+      , Button.colored
+      , Options.onClick GetSubreddit
+      ]
+      [ text "Fetch Subreddit" ]
     , br [] []
     , h2 [] [ text model.searchString ]
     , div [ class "wrap-posts" ]
@@ -101,7 +107,6 @@ viewContent model =
         ]
       ]
     ]
-    -- Scheme.topWithScheme Color.Teal Color.Green
 
 postView : Post -> Html Msg
 postView post =
@@ -125,10 +130,10 @@ getSubReddit searchString =
 
 decodePost : Json.Decoder Post
 decodePost =
-  Json.map3 Post
-    (Json.at ["data", "title"] Json.string)
-    (Json.at ["data", "url"] Json.string)
-    (Json.at ["data", "domain"] Json.string)
+  decode Post
+    |> requiredAt ["data", "title"] Json.string
+    |> requiredAt ["data", "url"] Json.string
+    |> requiredAt ["data", "domain"] Json.string
 
 decodePosts : Json.Decoder (List Post)
 decodePosts =
