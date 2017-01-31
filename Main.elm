@@ -9,6 +9,8 @@ import Task
 
 import Material
 import Material.Scheme as Scheme
+import Material.Menu as Menu
+import Material.List as Lists
 import Material.Layout as Layout
 import Material.Button as Button
 import Material.Color as Color
@@ -60,7 +62,11 @@ update msg model =
       { model | posts = posts, fetching = False } ! []
 
     NewSubreddit (Err _) ->
-      (model, Cmd.none)
+      let
+        errorMessage =
+          "Some went wrong 😳"
+      in
+        { model | searchString = errorMessage } ! []
 
     Mdl msg_ ->
       Material.update Mdl msg_ model
@@ -113,15 +119,18 @@ viewContent model =
       , br [] []
       , section []
         [ div [ class "posts" ]
-          (List.map postView model.posts)
+          (List.map listView model.posts)
         ]
       ]
     ]
 
-postView : Post -> Html Msg
-postView post =
-  div []
-    [ a [ style [("color", "#000")], href post.url, target "_blank" ] [ text post.title ] ]
+listView : Post -> Html Msg
+listView post =
+  div [ style [("margin", "10px")]]
+    [ a
+      [ style [("color", "#000"), ("text-decoration", "none")], href post.url, target "_blank" ]
+      [ text post.title ]
+    ]
 
 
 -- Subscriptions
