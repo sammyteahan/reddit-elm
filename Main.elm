@@ -67,7 +67,8 @@ update msg model =
       { model | searchString = newString } ! []
 
     GetSubreddit ->
-      { model | fetching = True } ! [ getSubReddit model.searchString ]
+      { model | fetching = True, selectedReddit = model.searchString }
+      ! [ getSubReddit model.searchString ]
 
     NewSubreddit (Ok posts) ->
       { model | posts = posts, fetching = False } ! []
@@ -94,11 +95,17 @@ view model =
       model.mdl
       [ Layout.fixedHeader
       ]
-      { header = [ h1 [ style [("padding-left", "20px")]] [ text "Elm Reddit" ] ]
+      { header = [ header ]
       , drawer = []
       , tabs = ( [], [] )
       , main = [ viewContent model ]
       }
+
+header : Html Msg
+header =
+  div []
+    [ h4 [ style [("padding-left", "20px")]] [ text "Relm" ]
+    ]
 
 containerStyle : List (Options.Property a b)
 containerStyle =
@@ -124,7 +131,7 @@ viewContent model =
       ]
       [ text "Fetch Subreddit" ]
     , br [] []
-    , h2 [] [ text model.searchString ]
+    , h2 [] [ text model.selectedReddit ]
     , div [ class "wrap-posts" ]
       [ section []
         [ Lists.ul []
@@ -147,6 +154,11 @@ listView post =
           [ text post.title ]
         ]
     ]
+
+loadingView : Model -> Html Msg
+loadingView model =
+  div []
+    [ text "loading" ]
 
 
 -- Subscriptions
