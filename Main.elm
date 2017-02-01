@@ -29,17 +29,28 @@ type alias Post =
 
 type alias Model =
   { searchString : String
+  , selectedReddit : String
   , fetching : Bool
+  , fetchError : String
   , imgUrl : String
   , posts : List Post
   , mdl : Material.Model
   }
 
+model : Model
+model =
+  { searchString = ""
+  , selectedReddit = "elm"
+  , fetching = True
+  , fetchError = ""
+  , imgUrl = "loading.gif"
+  , posts = []
+  , mdl = Material.model
+  }
+
 init : (Model, Cmd Msg)
 init =
-    ( Model "elm" True "loading.gif" [] Material.model
-    , getSubReddit "elm"
-    )
+    ( model, getSubReddit "elm")
 
 
 -- Update
@@ -115,10 +126,8 @@ viewContent model =
     , br [] []
     , h2 [] [ text model.searchString ]
     , div [ class "wrap-posts" ]
-      [ h2 [] [ text "Posts" ]
-      , br [] []
-      , section []
-        [ div [ class "posts" ]
+      [ section []
+        [ Lists.ul []
           (List.map listView model.posts)
         ]
       ]
@@ -126,10 +135,17 @@ viewContent model =
 
 listView : Post -> Html Msg
 listView post =
-  div [ style [("margin", "10px")]]
-    [ a
-      [ style [("color", "#000"), ("text-decoration", "none")], href post.url, target "_blank" ]
-      [ text post.title ]
+  Lists.li []
+    [ Lists.content []
+      [ a [ style [ ("color", "rgba(0, 0, 0, 0.87)")
+                  , ("text-decoration", "none")
+                  , ("font-weight", "400")
+                  ]
+          , href post.url
+          , target "_blank"
+          ]
+          [ text post.title ]
+        ]
     ]
 
 
