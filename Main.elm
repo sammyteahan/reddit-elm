@@ -186,10 +186,9 @@ loadingView model =
 
 
 -- Subscriptions
--- TODO fix subscription
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Menu.subs Mdl model.mdl
+  Menu.subs Mdl model.mdl
 
 
 -- Http
