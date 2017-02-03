@@ -59,6 +59,7 @@ type Msg
   | GetSubreddit
   | NewSubreddit (Result Http.Error (List Post))
   | Mdl (Material.Msg Msg)
+  | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -80,8 +81,11 @@ update msg model =
       in
         { model | searchString = errorMessage } ! []
 
-    Mdl msg_ ->
-      Material.update Mdl msg_ model
+    Mdl action_ ->
+      Material.update Mdl action_ model
+
+    NoOp ->
+      ( model, Cmd.none )
 
 
 -- View
@@ -101,11 +105,31 @@ view model =
       , main = [ viewContent model ]
       }
 
+-- TODO render menu and search bar
 header : Html Msg
 header =
   div []
-    [ h4 [ style [("padding-left", "20px")]] [ text "Relm" ]
+    [ h4 [ style [("float", "left"), ("padding-left", "20px")]] [ text "Relm" ]
+    , menu
     ]
+
+menu : Html Msg
+menu =
+  div [ style [("float", "right"), ("padding", "22px 20px 0 0")] ]
+  [ Menu.render Mdl [0] model.mdl
+    [ Menu.ripple, Menu.bottomLeft]
+    [ Menu.item
+      [ Menu.onSelect NoOp ]
+      [ text "English (US)" ]
+    , Menu.item
+      [ Menu.onSelect NoOp ]
+      [ text "français" ]
+    , Menu.item
+      [ Menu.onSelect NoOp ]
+      [ text "中文" ]
+    ]
+  ]
+
 
 containerStyle : List (Options.Property a b)
 containerStyle =
@@ -118,11 +142,11 @@ containerStyle =
 viewContent : Model -> Html Msg
 viewContent model =
   Options.div containerStyle
-    [ Textfield.render Mdl [0] model.mdl
+    [ Textfield.render Mdl [1] model.mdl
       [ Options.onInput UpdateSearchString
       ]
       []
-    , Button.render Mdl [1] model.mdl
+    , Button.render Mdl [2] model.mdl
       [ Button.raised
       , Button.ripple
       , Button.colored
@@ -162,9 +186,10 @@ loadingView model =
 
 
 -- Subscriptions
+-- TODO fix subscription
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
+    Menu.subs Mdl model.mdl
 
 
 -- Http
