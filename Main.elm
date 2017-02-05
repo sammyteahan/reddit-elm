@@ -9,11 +9,11 @@ import Task
 
 import Material
 import Material.Scheme as Scheme
-import Material.Menu as Menu
 import Material.List as Lists
 import Material.Layout as Layout
 import Material.Button as Button
 import Material.Color as Color
+import Material.Card as Card
 import Material.Textfield as Textfield
 import Material.Options as Options exposing (css)
 import Json.Decode.Pipeline as JsonPipeline exposing (decode, required, requiredAt)
@@ -59,7 +59,6 @@ type Msg
   | GetSubreddit
   | NewSubreddit (Result Http.Error (List Post))
   | Mdl (Material.Msg Msg)
-  | NoOp
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -84,9 +83,6 @@ update msg model =
     Mdl action_ ->
       Material.update Mdl action_ model
 
-    NoOp ->
-      ( model, Cmd.none )
-
 
 -- View
 -- Don't use 'Schem.top..' in prod. It does handle some style/Scheme
@@ -110,25 +106,7 @@ header : Html Msg
 header =
   div []
     [ h4 [ style [("float", "left"), ("padding-left", "20px")]] [ text "Relm" ]
-    , menu
     ]
-
-menu : Html Msg
-menu =
-  div [ style [("float", "right"), ("padding", "22px 20px 0 0")] ]
-  [ Menu.render Mdl [0] model.mdl
-    [ Menu.ripple, Menu.bottomLeft]
-    [ Menu.item
-      [ Menu.onSelect NoOp ]
-      [ text "English (US)" ]
-    , Menu.item
-      [ Menu.onSelect NoOp ]
-      [ text "français" ]
-    , Menu.item
-      [ Menu.onSelect NoOp ]
-      [ text "中文" ]
-    ]
-  ]
 
 
 containerStyle : List (Options.Property a b)
@@ -188,7 +166,7 @@ loadingView model =
 -- Subscriptions
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Menu.subs Mdl model.mdl
+  Sub.none
 
 
 -- Http
