@@ -78,7 +78,7 @@ update msg model =
         errorMessage =
           "Some went wrong 😳"
       in
-        { model | searchString = errorMessage } ! []
+        { model | searchString = errorMessage, fetching = False } ! []
 
     Mdl action_ ->
       Material.update Mdl action_ model
@@ -105,7 +105,7 @@ view model =
 header : Html Msg
 header =
   div []
-    [ h4 [ style [("float", "left"), ("padding-left", "20px")]] [ text "Relm" ]
+    [ h4 [ style [("float", "left"), ("padding-left", "20px")]] [ text "Reddit" ]
     ]
 
 
@@ -136,11 +136,23 @@ viewContent model =
     , h2 [] [ text model.selectedReddit ]
     , div [ class "wrap-posts" ]
       [ section []
-        [ Lists.ul []
-          (List.map listView model.posts)
-        ]
+        [ listContent model ]
       ]
     ]
+
+listContent : Model -> Html Msg
+listContent model =
+  let
+    renderContent =
+      if model.fetching then
+        div [] [ text "loading..." ]
+      else
+        div []
+          [ Lists.ul []
+            (List.map listView model.posts)
+          ]
+  in
+    renderContent
 
 listView : Post -> Html Msg
 listView post =
