@@ -51,7 +51,7 @@ model =
 
 init : (Model, Cmd Msg)
 init =
-    ( model, getSubReddit "elm")
+    ( model, getSubReddit "elm" )
 
 
 -- Update
@@ -102,7 +102,7 @@ view model =
       , main = [ viewContent model ]
       }
 
--- TODO render menu and search bar
+-- TODO search bar
 header : Html Msg
 header =
   div []
@@ -173,11 +173,6 @@ listView post =
           [ text post.title ]
         ]
     ]
-
-loadingView : Model -> Html Msg
-loadingView model =
-  div []
-    [ text "loading" ]
 
 
 -- Subscriptions
