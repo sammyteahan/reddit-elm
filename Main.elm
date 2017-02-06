@@ -8,12 +8,13 @@ import Http
 import Task
 
 import Material
-import Material.Scheme as Scheme
 import Material.List as Lists
-import Material.Layout as Layout
-import Material.Button as Button
+import Material.Grid as Grid
 import Material.Color as Color
-import Material.Card as Card
+import Material.Layout as Layout
+import Material.Scheme as Scheme
+import Material.Button as Button
+import Material.Spinner as Loading
 import Material.Textfield as Textfield
 import Material.Options as Options exposing (css)
 import Json.Decode.Pipeline as JsonPipeline exposing (decode, required, requiredAt)
@@ -140,12 +141,16 @@ viewContent model =
       ]
     ]
 
+renderSpinner : Html Msg
+renderSpinner =
+  Loading.spinner [ Loading.active True ]
+
 listContent : Model -> Html Msg
 listContent model =
   let
     renderContent =
       if model.fetching then
-        div [] [ text "loading..." ]
+        renderSpinner
       else
         div []
           [ Lists.ul []
