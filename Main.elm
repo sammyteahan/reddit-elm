@@ -33,7 +33,6 @@ type alias Model =
   , selectedReddit : String
   , fetching : Bool
   , fetchError : String
-  , imgUrl : String
   , posts : List Post
   , mdl : Material.Model
   }
@@ -44,7 +43,6 @@ model =
   , selectedReddit = "elm"
   , fetching = True
   , fetchError = ""
-  , imgUrl = "loading.gif"
   , posts = []
   , mdl = Material.model
   }
