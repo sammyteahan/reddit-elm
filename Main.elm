@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json exposing (..)
+import String
 import Http
 import Task
 
@@ -33,6 +34,7 @@ type alias Model =
   , selectedReddit : String
   , fetching : Bool
   , fetchError : String
+  , imgUrl : String
   , posts : List Post
   , mdl : Material.Model
   }
@@ -43,13 +45,14 @@ model =
   , selectedReddit = "elm"
   , fetching = True
   , fetchError = ""
+  , imgUrl = "loading.gif"
   , posts = []
   , mdl = Material.model
   }
 
 init : (Model, Cmd Msg)
 init =
-    ( model, getSubReddit "elm" )
+    ( model, getSubReddit "elm")
 
 
 -- Update
@@ -65,9 +68,16 @@ update msg model =
     UpdateSearchString newString ->
       { model | searchString = newString } ! []
 
+    -- todo: there's a better way to apply these changes
     GetSubreddit ->
-      { model | fetching = True, selectedReddit = model.searchString }
-      ! [ getSubReddit model.searchString ]
+      if String.isEmpty model.searchString then
+        model ! []
+      else
+        if model.selectedReddit == model.searchString then
+          model ! []
+        else
+          { model | fetching = True, selectedReddit = model.searchString }
+          ! [ getSubReddit model.searchString ]
 
     NewSubreddit (Ok posts) ->
       { model | posts = posts, fetching = False } ! []
@@ -100,7 +110,7 @@ view model =
       , main = [ viewContent model ]
       }
 
--- TODO search bar
+-- TODO render menu and search bar
 header : Html Msg
 header =
   div []
@@ -116,6 +126,7 @@ containerStyle =
     , css "padding-top" "25px"
     ]
 
+-- TODO disable GetSubreddit action if textfield is empty
 viewContent : Model -> Html Msg
 viewContent model =
   Options.div containerStyle
@@ -171,6 +182,11 @@ listView post =
           [ text post.title ]
         ]
     ]
+
+loadingView : Model -> Html Msg
+loadingView model =
+  div []
+    [ text "loading" ]
 
 
 -- Subscriptions
