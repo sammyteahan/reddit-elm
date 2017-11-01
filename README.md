@@ -21,6 +21,7 @@ The main purpose of this project is to learn a little more about decoding comple
 
 - [ ] Style
 - [ ] Nicer selection of sub reddits
+- [ ] See if it makes sense to split this into separate files/modules
 - [x] Type alias' and initial Model
 - [x] Post Decoder
 - [x] Posts Decoder
